@@ -1,10 +1,13 @@
-const express = require('express')
-const bodyParser = require('body-parser')
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
 
-const app = express()
 
-// Parse incoming JSON requests
-app.use(bodyParser.json())
+// Create an Express app
+const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors())
 
 // Define a simple route
 app.get('/', (req, res) => {
@@ -12,7 +15,7 @@ app.get('/', (req, res) => {
 })
 
 // Start the server
-const port = process.env.PORT || 3000
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`)
-})
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Sword Health Api is listening on port ${PORT}`);
+});
