@@ -4,6 +4,7 @@ import cors from "cors";
 import { database, createDatabase } from './database.js';
 import { seedDatabase } from './seed.js';
 import models from './models/index.js';
+import { login } from './controllers/AuthController.js';
 
 // create the database
 (async () => {
@@ -18,11 +19,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors())
 
-// Define a simple route
-app.get('/', (req, res) => {
-    res.send('Hello, world!')
-})
-
+// generate a token
+app.post('/login', login);
 
 // Start the server
 const PORT = process.env.PORT || 3000;

@@ -1,15 +1,14 @@
 import User from "./models/User.model.js";
-import Op from "sequelize";
 
 const mySQLdate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 const assignTechnician = async () => {
-    let technicians = await User.findAll({
+    const technicians = await User.findAll({
         where: {
             role: 'technician'
         }
     });
-    let techIds = technicians.map(t => t.dataValues.id);
-    let randomTechnicianId = techIds[Math.floor(Math.random()*techIds.length)];
+    const techIds = technicians.map(t => t.dataValues.id);
+    const randomTechnicianId = techIds[Math.floor(Math.random()*techIds.length)];
     return randomTechnicianId;
 };
 
