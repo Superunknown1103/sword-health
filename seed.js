@@ -1,6 +1,18 @@
 import User from "./models/User.model.js";
+import Op from "sequelize";
 
 const mySQLdate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+const assignTechnician = async () => {
+    let technicians = await User.findAll({
+        where: {
+            role: 'technician'
+        }
+    });
+    let techIds = technicians.map(t => t.dataValues.id);
+    let randomTechnicianId = techIds[Math.floor(Math.random()*techIds.length)];
+    return randomTechnicianId;
+};
+
 export const seedDatabase = async (queryInterface, database) => {
     await queryInterface.bulkInsert('Users', [
         // 2 managers
@@ -12,58 +24,59 @@ export const seedDatabase = async (queryInterface, database) => {
         { username: "max@company.com", password: "ghi", role: "technician", createdAt: mySQLdate, updatedAt: mySQLdate },
         { username: "tom@company.com", password: "jkl", role: "technician", createdAt: mySQLdate, updatedAt: mySQLdate },
     ]);
+    await assignTechnician();
     await queryInterface.bulkInsert("Tasks", [
         // 4 completed tasks
         {
             summary: "Fix broken printer",
             completed_at: mySQLdate,
-            technician_id: await User.findOne().then((user) => user.dataValues.id),
+            technician_id: await assignTechnician(),
             createdAt: mySQLdate,
             updatedAt: mySQLdate
         },
         {
             summary: "Install new software",
             completed_at: mySQLdate,
-            technician_id: await User.findOne().then((user) => user.dataValues.id),
+            technician_id: await assignTechnician(),
             createdAt: mySQLdate,
             updatedAt: mySQLdate
         },
         {
             summary: "Update website content",
             completed_at: mySQLdate,
-            technician_id: await User.findOne().then((user) => user.dataValues.id),
+            technician_id: await assignTechnician(),
             createdAt: mySQLdate,
             updatedAt: mySQLdate
         },
         {
             summary: "Research service providers",
             completed_at: mySQLdate,
-            technician_id: await User.findOne().then((user) => user.dataValues.id),
+            technician_id: await assignTechnician(),
             createdAt: mySQLdate,
             updatedAt: mySQLdate
         },
         // 4 incomplete tasks 
         {
             summary: "Write user guide",
-            technician_id: await User.findOne().then((user) => user.dataValues.id),
+            technician_id: await assignTechnician(),
             createdAt: mySQLdate,
             updatedAt: mySQLdate
         },
         {
             summary: "Upgrade software",
-            technician_id: await User.findOne().then((user) => user.dataValues.id),
+            technician_id: await assignTechnician(),
             createdAt: mySQLdate,
             updatedAt: mySQLdate
         },
         {
             summary: "Create reports",
-            technician_id: await User.findOne().then((user) => user.dataValues.id),
+            technician_id: await assignTechnician(),
             createdAt: mySQLdate,
             updatedAt: mySQLdate
         },
         {
             summary: "Backup database",
-            technician_id: await User.findOne().then((user) => user.dataValues.id),
+            technician_id: await assignTechnician(),
             createdAt: mySQLdate,
             updatedAt: mySQLdate
         }
