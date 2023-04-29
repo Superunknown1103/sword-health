@@ -1,6 +1,9 @@
 import User from "./models/User.model.js";
 import bcrypt from 'bcrypt';
+import { createDatabase, database } from './database.js';
+import models from './models/index.js';
 
+const queryInterface = database.getQueryInterface();
 const mySQLdate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 const assignTechnician = async () => {
     const technicians = await User.findAll({
@@ -9,12 +12,12 @@ const assignTechnician = async () => {
         }
     });
     const techIds = technicians.map(t => t.dataValues.id);
-    const randomTechnicianId = techIds[Math.floor(Math.random()*techIds.length)];
+    const randomTechnicianId = techIds[Math.floor(Math.random() * techIds.length)];
     return randomTechnicianId;
 };
 const hashedPassword = await bcrypt.hash('password', 10);
 
-export const seedDatabase = async (queryInterface, database) => {
+export const seedDatabase = async () => {
     await queryInterface.bulkInsert('Users', [
         // 2 managers
         { username: "bob@company.com", password: hashedPassword, role: "manager", createdAt: mySQLdate, updatedAt: mySQLdate },
@@ -82,4 +85,10 @@ export const seedDatabase = async (queryInterface, database) => {
             updatedAt: mySQLdate
         }
     ]);
-};
+}
+
+(async () => {
+    await createDatabase();
+    await database.sync({ force: true });
+    await seedDatabase();
+})();

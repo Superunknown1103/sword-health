@@ -17,4 +17,3 @@ export const database = new Sequelize('sword_health_sql', 'root', process.env.DB
     port: 3306,
     password: process.env.DB_PASS
 });
-

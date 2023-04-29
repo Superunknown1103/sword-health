@@ -1,17 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { database, createDatabase } from './database.js';
-import { seedDatabase } from './seed.js';
-import models from './models/index.js';
 import { login } from './controllers/AuthController.js';
-
-// create the database
-(async () => {
-    await createDatabase();
-    await database.sync({ force: true });
-    await seedDatabase(database.getQueryInterface(), database);
-})();
+import { getAllTasks, createTask, completeTask } from './controllers/TaskController.js';
 
 // Create an Express app
 const app = express();
@@ -21,6 +12,12 @@ app.use(cors())
 
 // generate a token
 app.post('/login', login);
+// retrieve all tasks
+app.get('/tasks/getAllTasks', getAllTasks);
+// make a task
+app.post('/tasks/createTask', createTask);
+// complete a task
+app.put('/tasks/completeTask', completeTask);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
