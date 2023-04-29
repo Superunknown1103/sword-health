@@ -1,7 +1,8 @@
 import User from "./models/User.model.js";
+// import Task model - necessary for seeding
+import Task from "./models/Task.model.js";
 import bcrypt from 'bcrypt';
 import { createDatabase, database } from './database.js';
-import models from './models/index.js';
 
 const queryInterface = database.getQueryInterface();
 const mySQLdate = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -20,8 +21,8 @@ const hashedPassword = await bcrypt.hash('password', 10);
 export const seedDatabase = async () => {
     await queryInterface.bulkInsert('Users', [
         // 2 managers
-        { username: "bob@company.com", password: hashedPassword, role: "manager", createdAt: mySQLdate, updatedAt: mySQLdate },
-        { username: "ashley@company.com", password: hashedPassword, role: "manager", createdAt: mySQLdate, updatedAt: mySQLdate },
+        { username: "brucewilldevelop@gmail.com", password: hashedPassword, role: "manager", createdAt: mySQLdate, updatedAt: mySQLdate },
+        { username: "superunknown1103@gmail.com", password: hashedPassword, role: "manager", createdAt: mySQLdate, updatedAt: mySQLdate },
         // 4 technicians
         { username: "jeff@company.com", password: hashedPassword, role: "technician", createdAt: mySQLdate, updatedAt: mySQLdate },
         { username: "janice@company.com", password: hashedPassword, role: "technician", createdAt: mySQLdate, updatedAt: mySQLdate },
