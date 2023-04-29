@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv'
 dotenv.config()
 import { Op } from 'sequelize';
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import User from '../models/User.model.js';
 
 // Define a secret key for signing and verifying JWTs
@@ -48,12 +48,17 @@ export const login = async (req, res) => {
         const { username, password } = req.body;
         const user = await User.findOne({
             where: {
-                [Op.and]: [
-                    { username: req.body.username },
-                    { password: req.body.password }
-                ]
+                username: username
             }
         });
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid username or password' });
+        }
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        console.log(password, user.password, isValidPassword);
+        if (!isValidPassword) {
+            return res.status(401).json({ message: 'Invalid username or password' });
+        }
         const token = jwt.sign({ user: user.id, role: user.role }, process.env.JWT);
         return res.json({ token })
     } catch (error) {
