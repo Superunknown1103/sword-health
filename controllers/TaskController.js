@@ -24,16 +24,22 @@ export const createTask = async (req, res) => {
 
 export const completeTask = async (req, res) => {
     try {
-        console.log(req.body);
-        const task = await Task.findOne({ where: { id: req.body.id } });
-        console.log(task);
-        if (task) {
+        const task = await Task.findOne({
+            where: {
+                id: req.body.id,
+            }
+        });
+        if (task.technician_id !== req.body.technician_id) {
+            throw Error('Specified technician id does not match our records. Please examine your request.')
+        }
+        if (task && task.completed_at == null ) {
+            console.log('HIT');
             task.completed_at = new Date();
             await task.save();
         }
         res.json({ task });
     } catch (err) {
         console.error('Error creating task: ', err);
-        res.status(500).send('An error occurred completing task');
+        res.status(500).send(`An error occurred completing task: ${err}`);
     }
 };

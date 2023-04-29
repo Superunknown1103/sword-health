@@ -1,38 +1,37 @@
 import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv'
 dotenv.config()
-import { Op } from 'sequelize';
 import bcrypt from 'bcrypt';
 import User from '../models/User.model.js';
 
 // Define a secret key for signing and verifying JWTs
 const secretKey = process.env.JWT;
 
-// Middleware function for authenticating requests
-export function authenticateToken(req, res, next) {
-    // Get the JWT from the Authorization header
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+export const authenticate = (requiredRole) => (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Authorization header missing' });
+  }
 
-    // If there is no token, return an HTTP 401 Unauthorized error
-    if (!token) {
-        return res.sendStatus(401);
+  const token = authHeader.split(' ')[1];
+  try {
+    const decodedToken = jwt.verify(token, secretKey);
+    req.user = decodedToken.user;
+    
+    if (requiredRole == "manager" && decodedToken.role !== 'manager') {
+      return res.status(403).json({ message: 'Forbidden' });
     }
 
-    // Verify the token using the secret key
-    jwt.verify(token, secretKey, (err, user) => {
-        // If the token is invalid, return an HTTP 403 Forbidden error
-        if (err) {
-            return res.sendStatus(403);
-        }
+    if (requiredRole == "all" && decodedToken.role !== "manager" && req.body.technician_id !== decodedToken.user) { 
+        return res.status(403).json({ message: 'You do not have sufficient privileges to perform this action.'})
+    }
 
-        // Set the user object on the request for use in other middleware functions
-        req.user = user;
-
-        // Call the next middleware function
-        next();
-    });
-}
+    next();
+  } catch (err) {
+    console.error('Error verifying token:', err);
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
 
 // Function for generating a JWT for a given user
 export function generateToken(user) {

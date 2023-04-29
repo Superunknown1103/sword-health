@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { login } from './controllers/AuthController.js';
+import { login, authenticate } from './controllers/AuthController.js';
 import { getAllTasks, createTask, completeTask } from './controllers/TaskController.js';
 
 // Create an Express app
@@ -13,11 +13,13 @@ app.use(cors())
 // generate a token
 app.post('/login', login);
 // retrieve all tasks
-app.get('/tasks/getAllTasks', getAllTasks);
+app.get('/tasks/getAllTasks', authenticate('manager'), getAllTasks);
 // make a task
-app.post('/tasks/createTask', createTask);
+app.post('/tasks/createTask', authenticate('all'), createTask);
 // complete a task
-app.put('/tasks/completeTask', completeTask);
+app.put('/tasks/completeTask', authenticate('all'), completeTask);
+// view my tasks (as a technician)
+// app.get(`/technician/${}/tasks`)
 
 // Start the server
 const PORT = process.env.PORT || 3000;
