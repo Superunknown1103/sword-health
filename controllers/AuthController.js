@@ -5,8 +5,9 @@ import bcrypt from 'bcrypt';
 import User from '../models/User.model.js';
 
 // Define a secret key for signing and verifying JWTs
-const secretKey = process.env.JWT;
+export const secretKey = process.env.JWT;
 
+// middleware authenticator function
 export const authenticate = (requiredRole) => (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -17,11 +18,13 @@ export const authenticate = (requiredRole) => (req, res, next) => {
   try {
     const decodedToken = jwt.verify(token, secretKey);
     req.user = decodedToken.user;
-    
+
+    // check that the role of the current user matches the role necessary to proceed with this action
     if (requiredRole == "manager" && decodedToken.role !== 'manager') {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
+    // check that the technician id matches the id of the user that is trying to perform this action (unless they have manager privileges)
     if (requiredRole == "all" && decodedToken.role !== "manager" && req.body.technician_id !== decodedToken.user) { 
         return res.status(403).json({ message: 'You do not have sufficient privileges to perform this action.'})
     }
@@ -32,15 +35,6 @@ export const authenticate = (requiredRole) => (req, res, next) => {
     return res.status(401).json({ message: 'Invalid token' });
   }
 };
-
-// Function for generating a JWT for a given user
-export function generateToken(user) {
-    // Set the expiration time to 1 hour from now
-    const expiresIn = 60 * 60;
-
-    // Generate the JWT using the secret key
-    return jwt.sign({ user }, secretKey, { expiresIn });
-}
 
 export const login = async (req, res) => {
     try {

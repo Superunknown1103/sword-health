@@ -31,14 +31,18 @@ export const completeTask = async (req, res) => {
                 id: req.body.id,
             }
         });
-        if (task.technician_id !== req.body.technician_id) {
+        if (task.dataValues.technician_id !== req.body.technician_id) {
             throw Error('Specified technician id does not match our records. Please examine your request.')
         }
-        if (task && task.completed_at == null) {
-            task.completed_at = new Date();
+        if (task && task.dataValues.completed_at == null) {
+            task.dataValues.completed_at = new Date();
             // Notification for Managers
-            sendNotification(task)
+            if (process.env.NODE_ENV !== "test") {
+                sendNotification(task)
+            }
             await task.save();
+        } else if (task.dataValues.completed_at !== null) { 
+            throw Error('It appears you are trying to complete a task that has already been completed.')
         }
         res.json({ task });
     } catch (err) {
