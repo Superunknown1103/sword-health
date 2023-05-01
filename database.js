@@ -6,13 +6,13 @@ const databaseName = "sword_health_sql";
 
 export const createDatabase = async () => {
     // Initialize the Sequelize instance
-    const sequelize = new Sequelize(`mysql://root:${process.env.DB_PASS}@localhost:3306`);
+    const sequelize = new Sequelize(`mysql://root:${process.env.DB_PASS}@${process.env.DB_HOST}:3306`);
     // Create the database
     return sequelize.query(`CREATE DATABASE IF NOT EXISTS ${databaseName}`);
 }
 
 export const database = new Sequelize('sword_health_sql', 'root', process.env.DB_PASS, {
-    host: 'localhost',
+    host: `${process.env.DB_HOST}`,
     dialect: 'mysql',
     port: 3306,
     password: process.env.DB_PASS
