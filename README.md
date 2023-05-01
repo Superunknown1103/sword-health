@@ -1,7 +1,8 @@
 You can run this application with or without docker.
 
 ## Dependencies 
-    Install necessary dependencies by running npm install. Here are some of the dependecies used and the purpose they serve:
+
+Install necessary dependencies by running npm install. Here are some of the dependecies used and the purpose they serve:
         - sendgrid/mail is used to send emails. An API key will need to be added to the process.env in order to actually use sendgrid's email server. You can create one by going to their website and selecting FREE tier access or ask me for my api key. 
         - bcrypt will encrypt and decrypt our passwords for identity proteciton.
         - dotenv allows easy access to enviornment variables
@@ -50,4 +51,4 @@ You can run this application with or without docker.
 
 ## Tests
 
-    Tests for this project were written using Jest. You should be able to run `npm run test` and view their output. I have not written all possible tests but just enough to showcase I am able to use the Jest testing framework. Some additional tests can be written for getTasksByTechnicianId, updateTask and sendNotification.
+Tests for this project were written using Jest. You should be able to run `npm run test` and view their output. I have not written all possible tests but just enough to showcase I am able to use the Jest testing framework. Some additional tests can be written for getTasksByTechnicianId, updateTask and sendNotification.
