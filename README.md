@@ -1,19 +1,19 @@
 You can run this application with or without docker.
 
-## DEPENDENCIES 
-1. Install necessary dependencies by running npm install. Here are some of the dependecies used and the purpose they serve:
-    - sendgrid/mail is used to send emails. An API key will need to be added to the process.env in order to actually use sendgrid's email server. You can create one by going to their website and selecting FREE tier access or ask me for my api key. 
-    - bcrypt will encrypt and decrypt our passwords for identity proteciton.
-    - dotenv allows easy access to enviornment variables
-    - express will help configure routes and server management for our application.
-    - jest is our testing framework.
-    - jsonwebtoken will create tokens to verify the role and authenticity of users making api requests.
-    - sequelize is an ORM that helps us design our models and sync with our database.
+## Dependencies 
+    Install necessary dependencies by running npm install. Here are some of the dependecies used and the purpose they serve:
+        - sendgrid/mail is used to send emails. An API key will need to be added to the process.env in order to actually use sendgrid's email server. You can create one by going to their website and selecting FREE tier access or ask me for my api key. 
+        - bcrypt will encrypt and decrypt our passwords for identity proteciton.
+        - dotenv allows easy access to enviornment variables
+        - express will help configure routes and server management for our application.
+        - jest is our testing framework.
+        - jsonwebtoken will create tokens to verify the role and authenticity of users making api requests.
+        - sequelize is an ORM that helps us design our models and sync with our database.
 
-## RUNNING WITH DOCKER
+## Running with Docker
    Make sure your .env file has a DB_PASS and DB_HOST variables. Set DB_HOST to `db`. Run `docker-compose build` and then `docker compose-up` to start and run the application and database. Once the database has been established, seeded and express server has started, you should be able to hit the API at `localhost:3000/`.
 
-## RUN WITHOUT DOCKER
+## Run without Docker
 
 1. Set up enviornment variables by creating a .env file that contains the following: 
     - DB_HOST - Set to `localhost`
@@ -25,7 +25,7 @@ You can run this application with or without docker.
     - I recommend changing the username of managers to your own email to test that the emails are being received.
 3. Run `node index.js` to start the backend server, so that you can begin querying the API.
 
-## ROUTES
+## Routes
  - The routes are listed in index.js but you may also view them here for reference. 
 
     ```
@@ -48,6 +48,6 @@ You can run this application with or without docker.
     - Because we have protected our api endpoints with token-based authentication, you will need to hit /login and generate a token to send in your authorization header before trying to access any of these protected endpoints. View the database to get a useable set of credentials.
     - The authenticate middleware function will ensure that your token is valid and check your role before allowing you to perform certain actions. Some restricted actions are viewing all tasks, which is reserved for manager-role users only. Technicians are also not allowed to update tasks that do not belong to them. Your token will store information about which user you are, preventing you from performing actions you're not permitted to do. Managers are allowed to do anything provided that the request they send is valid. For example, they cannot update a task with a mismatched technician_id.
 
-## TESTS
+## Tests
 
-    1. Tests for this project were written using Jest. You should be able to run `npm run test` and view their output. I have not written all possible tests but just enough to showcase I am able to use the Jest testing framework. Some additional tests can be written for getTasksByTechnicianId, updateTask and sendNotification.
+    Tests for this project were written using Jest. You should be able to run `npm run test` and view their output. I have not written all possible tests but just enough to showcase I am able to use the Jest testing framework. Some additional tests can be written for getTasksByTechnicianId, updateTask and sendNotification.
