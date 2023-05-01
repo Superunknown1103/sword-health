@@ -41,7 +41,7 @@ export const completeTask = async (req, res) => {
                 sendNotification(task)
             }
             await task.save();
-        } else if (task.dataValues.completed_at !== null) { 
+        } else if (task.dataValues.completed_at !== null) {
             throw Error('It appears you are trying to complete a task that has already been completed.')
         }
         res.json({ task });
@@ -67,7 +67,7 @@ export const getTasksbyTechnicianId = async (req, res) => {
 
 export const deleteTask = async (req, res) => {
     try {
-        const task = await Task.destroy({
+        await Task.destroy({
             where: {
                 id: req.body.id
             }
@@ -81,7 +81,7 @@ export const deleteTask = async (req, res) => {
 
 export const updateTask = async (req, res) => {
     try {
-        const task = await Task.update({ summary: req.body.summary }, {
+        await Task.update({ summary: req.body.summary }, {
             where: {
                 id: req.body.id,
             }
@@ -93,33 +93,25 @@ export const updateTask = async (req, res) => {
     }
 }
 
-export const sendNotification = async (taskDetails) => {
-    const completed_at = taskDetails.dataValues.completed_at.toString();
+export const sendNotification = async (task) => {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    const technician = await User.findOne({
-        where: {
-            id: taskDetails.dataValues.technician_id
-        }
-    })
-    await User.findOne({
-        where: {
-            role: 'manager'
-        }
-    })
-        .then((result) => {
-            const toEmail = result.dataValues.username;
-            const msg = {
-                to: toEmail,
-                from: process.env.SENDGRID_FROM_EMAIL,
-                subject: 'Task Completed',
-                text: `A task with the description ${taskDetails.dataValues.summary} has been completed by ${technician.dataValues.username} at ${completed_at}`,
-            };
-            sgMail.send(msg)
-                .then(() => {
-                    console.log('Email sent')
-                })
-                .catch((error) => {
-                    console.error(error)
-                })
+    const [technician, manager] = await Promise.all([
+        User.findOne({ where: { id: task.dataValues.technician_id } }),
+        User.findOne({ where: { role: 'manager' } })
+    ]);
+    const completed_at = task.dataValues.completed_at.toString();
+    const toEmail = manager.dataValues.username;
+    const msg = {
+        to: toEmail,
+        from: process.env.SENDGRID_FROM_EMAIL,
+        subject: 'Task Completed',
+        text: `A task with the description ${task.dataValues.summary} has been completed by ${technician.dataValues.username} at ${completed_at}`,
+    };
+    sgMail.send(msg)
+        .then(() => {
+            console.log('Email sent')
+        })
+        .catch((error) => {
+            console.error(error)
         })
 };

@@ -1,6 +1,5 @@
 import express from "express";
 import bodyParser from "body-parser";
-import cors from "cors";
 import { login, authenticate } from './controllers/AuthController.js';
 import { getAllTasks, createTask, completeTask, getTasksbyTechnicianId, deleteTask, updateTask } from './controllers/TaskController.js';
 
@@ -8,7 +7,6 @@ import { getAllTasks, createTask, completeTask, getTasksbyTechnicianId, deleteTa
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors())
 
 // generate a token
 app.post('/login', login);
